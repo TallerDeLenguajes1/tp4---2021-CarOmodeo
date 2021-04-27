@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdlib.h>
-#include <time.h>
+#include <string.h>
 
 struct Tarea{
     int tareaID;
@@ -14,6 +13,7 @@ typedef struct Tarea tarea;
 void cargarTareas(tarea **array, int tamanio);
 void mostrarTares(tarea *array);
 void ToDo(tarea **array, tarea **array2, int tamanio);
+void buscaTarea(tarea **array, int tamanio);
 
 int main(){
     tarea **actividades, **realizadas;
@@ -32,7 +32,11 @@ int main(){
         mostrarTares(*(actividades + i));
     }*/
 
-    ToDo(actividades, realizadas, cantidadAct);
+    printf("\n BUSCAR TAREAS POR PALABRA CLAVE \n");
+
+    buscaTarea(actividades, cantidadAct);
+
+    /*ToDo(actividades, realizadas, cantidadAct);
 
     printf("\n TAREAS PENDIENTES \n");
     for(int i = 0; i < cantidadAct; i++){
@@ -46,7 +50,7 @@ int main(){
         if((*(realizadas + i)) != NULL){
             mostrarTares(*(realizadas + i));
         }
-    }
+    }*/
 
     return 0;
 }
@@ -89,5 +93,29 @@ void ToDo(tarea **array, tarea **array2, int tamanio)
         }else{
             (*(array2 + i)) = NULL;
         }
+    }
+}
+
+void buscaTarea(tarea **array, int tamanio)
+{
+    char palabraClave[30];
+    char *palabraEncont;
+    int coincidencia = 0;
+
+    printf("Ingrese una palabra clave para buscar una tarea: ");
+    gets(palabraClave);
+
+    for (int i = 0; i < tamanio; i ++){
+       
+        palabraEncont = strstr((*(array + i))->descripcion, palabraClave);
+
+        if(palabraEncont != NULL){
+            mostrarTares((*(array + i)));
+            coincidencia++;
+        }
+    }
+    
+    if(coincidencia == 0){
+        printf("No se encontraron resultados");
     }
 }
