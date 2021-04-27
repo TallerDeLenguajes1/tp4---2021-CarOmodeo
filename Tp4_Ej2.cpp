@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdlib.h>
-#include <time.h>
+#include <string.h>
 
 struct Tarea{
     int tareaID;
@@ -35,7 +34,7 @@ int main(){
 
     buscaTarea(actividades, cantidadAct);
 
-    /*ToDo(actividades, realizadas, cantidadAct);
+    ToDo(actividades, realizadas, cantidadAct);
 
     printf("\n TAREAS REALIZADAS \n");
     for(int i = 0; i < cantidadAct; i++){
@@ -49,7 +48,7 @@ int main(){
         if((*(actividades + i)) != NULL){
             mostrarTares(*(actividades + i));
         }
-    }*/
+    }
 
     return 0;
 }
