@@ -36,7 +36,7 @@ int main(){
 
     buscaTarea(actividades, cantidadAct);
 
-    /*ToDo(actividades, realizadas, cantidadAct);
+    ToDo(actividades, realizadas, cantidadAct);
 
     printf("\n TAREAS PENDIENTES \n");
     for(int i = 0; i < cantidadAct; i++){
@@ -50,7 +50,7 @@ int main(){
         if((*(realizadas + i)) != NULL){
             mostrarTares(*(realizadas + i));
         }
-    }*/
+    }
 
     return 0;
 }
