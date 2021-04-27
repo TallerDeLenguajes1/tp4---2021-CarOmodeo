@@ -14,6 +14,7 @@ typedef struct Tarea tarea;
 void cargarTareas(tarea **array, int tamanio);
 void mostrarTares(tarea *array);
 void ToDo(tarea **array, tarea **array2, int tamanio);
+void buscaTarea(tarea **array, int tamanio);
 
 int main(){
     tarea **actividades, **realizadas;
@@ -32,14 +33,9 @@ int main(){
         mostrarTares(*(actividades + i));
     }*/
 
-    ToDo(actividades, realizadas, cantidadAct);
+    buscaTarea(actividades, cantidadAct);
 
-    printf("\n TAREAS PENDIENTES \n");
-    for(int i = 0; i < cantidadAct; i++){
-        if((*(actividades + i)) != NULL){
-            mostrarTares(*(actividades + i));
-        }
-    }
+    /*ToDo(actividades, realizadas, cantidadAct);
 
     printf("\n TAREAS REALIZADAS \n");
     for(int i = 0; i < cantidadAct; i++){
@@ -47,6 +43,13 @@ int main(){
             mostrarTares(*(realizadas + i));
         }
     }
+
+    printf("\n TAREAS PENDIENTES \n");
+    for(int i = 0; i < cantidadAct; i++){
+        if((*(actividades + i)) != NULL){
+            mostrarTares(*(actividades + i));
+        }
+    }*/
 
     return 0;
 }
@@ -89,5 +92,20 @@ void ToDo(tarea **array, tarea **array2, int tamanio)
         }else{
             (*(array2 + i)) = NULL;
         }
+    }
+}
+
+void buscaTarea(tarea **array, int tamanio)
+{
+    int id;
+    printf("Ingrese el ID de la tarea que desea buscar (ID > 0): ");
+    scanf("%d", &id);
+
+    if(id > tamanio){
+        printf("El ID ingresado no pertenece a ninguna tarea");
+        buscaTarea(array, tamanio);
+    } else{
+        printf("\n TAREA BUSCADA POR ID \n");
+        mostrarTares(*(array + (id - 1)));
     }
 }
