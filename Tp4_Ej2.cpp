@@ -13,7 +13,8 @@ typedef struct Tarea tarea;
 void cargarTareas(tarea **array, int tamanio);
 void mostrarTares(tarea *array);
 void ToDo(tarea **array, tarea **array2, int tamanio);
-void buscaTarea(tarea **array, int tamanio);
+void busquedaPorID(tarea **array, int tamanio);
+void busquedaPorPalabra(tarea **array, int tamanio);
 
 int main(){
     tarea **actividades, **realizadas;
@@ -32,23 +33,27 @@ int main(){
         mostrarTares(*(actividades + i));
     }*/
 
+    printf("\n BUSCAR TAREAS POR ID \n");
+    busquedaPorID(actividades, cantidadAct);
+
     printf("\n BUSCAR TAREAS POR PALABRA CLAVE \n");
+    fflush(stdin);
+    busquedaPorPalabra(actividades, cantidadAct);
 
-    buscaTarea(actividades, cantidadAct);
-
+    printf("\n ANALIZAR SI SE REALIZARON TAREAS \n");
     ToDo(actividades, realizadas, cantidadAct);
-
-    printf("\n TAREAS PENDIENTES \n");
-    for(int i = 0; i < cantidadAct; i++){
-        if((*(actividades + i)) != NULL){
-            mostrarTares(*(actividades + i));
-        }
-    }
 
     printf("\n TAREAS REALIZADAS \n");
     for(int i = 0; i < cantidadAct; i++){
         if((*(realizadas + i)) != NULL){
             mostrarTares(*(realizadas + i));
+        }
+    }
+
+    printf("\n TAREAS PENDIENTES \n");
+    for(int i = 0; i < cantidadAct; i++){
+        if((*(actividades + i)) != NULL){
+            mostrarTares(*(actividades + i));
         }
     }
 
@@ -84,7 +89,7 @@ void ToDo(tarea **array, tarea **array2, int tamanio)
     for(int i = 0; i < tamanio; i++){
         mostrarTares(*(array + i));
         fflush(stdin);
-        printf("La tarea fue realizada? (Responda Si/No) ");
+        printf("La tarea fue realizada? (Responda S/N) ");
         gets(respuesta);
         
         if(respuesta[0] == 'S' || respuesta[0] == 's'){
@@ -96,7 +101,22 @@ void ToDo(tarea **array, tarea **array2, int tamanio)
     }
 }
 
-void buscaTarea(tarea **array, int tamanio)
+void busquedaPorID(tarea **array, int tamanio)
+{
+    int id;
+    printf("Ingrese el ID de la tarea que desea buscar (ID > 0): ");
+    scanf("%d", &id);
+
+    if(id > tamanio){
+        printf("El ID ingresado no pertenece a ninguna tarea");
+        busquedaPorID(array, tamanio);
+    } else{
+        printf("\n TAREA BUSCADA POR ID \n");
+        mostrarTares(*(array + (id - 1)));
+    }
+}
+
+void busquedaPorPalabra(tarea **array, int tamanio)
 {
     char palabraClave[30];
     char *palabraEncont;
@@ -116,6 +136,6 @@ void buscaTarea(tarea **array, int tamanio)
     }
     
     if(coincidencia == 0){
-        printf("No se encontraron resultados");
+        printf("No se encontraron resultados \n");
     }
 }
