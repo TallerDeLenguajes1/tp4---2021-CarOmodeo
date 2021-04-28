@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 struct Tarea{
     int tareaID;
@@ -17,6 +18,8 @@ void busquedaPorID(tarea **array, int tamanio);
 void busquedaPorPalabra(tarea **array, int tamanio);
 
 int main(){
+    srand(time(NULL));
+
     tarea **actividades, **realizadas;
     int cantidadAct;
 
@@ -66,8 +69,7 @@ void cargarTareas(tarea **array, int tamanio)
         printf("-------- TAREA %d-------- \n", i+1);
         *(array + i) = (tarea*)malloc(sizeof(tarea));
         (*(array + i))->tareaID = i + 1;
-        printf("Duracion de la tarea en horas: ");
-        scanf("%d", &(*(array + i))->duracion);
+        (*(array + i))->duracion = rand() % 10 + 1;
         fflush(stdin);
         (*(array + i))->descripcion = (char*)malloc(sizeof(char)*50);
         printf("Descripcion: ");
@@ -125,6 +127,7 @@ void busquedaPorPalabra(tarea **array, int tamanio)
     printf("Ingrese una palabra clave para buscar una tarea: ");
     gets(palabraClave);
 
+    printf("\n TAREA BUSCADA POR PALABRA CLAVE \n");
     for (int i = 0; i < tamanio; i ++){
        
         palabraEncont = strstr((*(array + i))->descripcion, palabraClave);
