@@ -3,139 +3,223 @@
 #include <string.h>
 #include <time.h>
 
-struct Tarea{
+typedef struct Tarea{
     int tareaID;
     char *descripcion;
     int duracion;
-};
+}Tarea;
 
-typedef struct Tarea tarea;
+typedef struct TNodo{
+    Tarea tarea;
+    struct TNodo *siguiente;
+} TNodo;
 
-void cargarTareas(tarea **array, int tamanio);
-void mostrarTares(tarea *array);
-void ToDo(tarea **array, tarea **array2, int tamanio);
-void busquedaPorID(tarea **array, int tamanio);
-void busquedaPorPalabra(tarea **array, int tamanio);
+TNodo * crearListaVacia();
+TNodo * crearNodo();
+void cargarTareasNodo(TNodo *nodo, int tareaID, char *descripcion, int duracion);
+void cargarTareas(TNodo **lista, int tamanio);
+void insertarNodoALista(TNodo **lista, TNodo *nodo);
+void mostrarTares(TNodo *lista);
+void ToDo(TNodo **lista, TNodo **lista2);
+void busquedaPorID(TNodo **lista, int tamanio);
+void busquedaPorPalabra(TNodo **lista);
 
 int main(){
     srand(time(NULL));
 
-    tarea **actividades, **realizadas;
+    TNodo *start, *ready, *indice;
     int cantidadAct;
+
+    start = crearListaVacia();
+    ready = crearListaVacia();
 
     printf("Ingrese la cantidad de tareas a cargar: ");
     scanf("%d", &cantidadAct);
 
-    actividades = (tarea**)malloc(sizeof(tarea*)*cantidadAct);
-    realizadas = (tarea**)malloc(sizeof(tarea*)*cantidadAct);
-
     printf("\n CARGAR TAREAS \n");
-    cargarTareas(actividades, cantidadAct);
+    cargarTareas(&start, cantidadAct);
 
-   /*for(int i = 0; i < cantidadAct; i++){
-        mostrarTares(*(actividades + i));
-    }*/
+    indice = start;
+    /*while(indice != NULL){
+        mostrarTares(indice);
+        indice = indice->siguiente;        
+    }
 
     printf("\n BUSCAR TAREAS POR ID \n");
-    busquedaPorID(actividades, cantidadAct);
+    busquedaPorID(&start, cantidadAct);
 
     printf("\n BUSCAR TAREAS POR PALABRA CLAVE \n");
     fflush(stdin);
-    busquedaPorPalabra(actividades, cantidadAct);
+    busquedaPorPalabra(&start);*/
 
     printf("\n ANALIZAR SI SE REALIZARON TAREAS \n");
-    ToDo(actividades, realizadas, cantidadAct);
+    ToDo(&start, &ready);
 
+    indice = ready;
     printf("\n TAREAS REALIZADAS \n");
-    for(int i = 0; i < cantidadAct; i++){
-        if((*(realizadas + i)) != NULL){
-            mostrarTares(*(realizadas + i));
-        }
+    while(indice != NULL){
+        mostrarTares(indice);
+        indice = indice->siguiente;
     }
 
+    indice = start;
     printf("\n TAREAS PENDIENTES \n");
-    for(int i = 0; i < cantidadAct; i++){
-        if((*(actividades + i)) != NULL){
-            mostrarTares(*(actividades + i));
-        }
+    while(indice != NULL){
+        mostrarTares(indice);
+        indice = indice->siguiente;
+    }
+
+    indice = start;
+    while (indice != NULL)
+    {
+        TNodo * aux = indice;
+        indice = indice->siguiente;
+        free(aux);
+    }
+
+    indice = ready;
+    while (indice != NULL)
+    {
+        TNodo * aux = indice;
+        indice = indice->siguiente;
+        free(aux);
     }
 
     return 0;
 }
 
-void cargarTareas(tarea **array, int tamanio)
+TNodo * crearListaVacia()
 {
+    return NULL;
+}
+
+TNodo * crearNodo()
+{
+    TNodo *nuevoNodo = (TNodo*)malloc(sizeof(TNodo));
+    nuevoNodo->siguiente = NULL;
+    return nuevoNodo;
+}
+
+void cargarTareas(TNodo **lista, int tamanio)
+{
+    TNodo *NuevoNodo;
     for(int i = 0; i < tamanio; i++){
+        NuevoNodo = crearNodo();
         printf("-------- TAREA %d-------- \n", i+1);
-        *(array + i) = (tarea*)malloc(sizeof(tarea));
-        (*(array + i))->tareaID = i + 1;
-        (*(array + i))->duracion = rand() % 10 + 1;
         fflush(stdin);
-        (*(array + i))->descripcion = (char*)malloc(sizeof(char)*50);
-        printf("Descripcion: ");
-        gets((*(array + i))->descripcion);
+        char *descripcion = (char*)malloc(sizeof(char)*100);
+        printf("Descripcion de la tarea: ");
+        gets(descripcion);
+
+        cargarTareasNodo(NuevoNodo, i + 1, descripcion, rand()% 10 + 1);
+        insertarNodoALista(lista, NuevoNodo);
     }
 }
 
-void mostrarTares(tarea *tarea)
+void cargarTareasNodo(TNodo *nodo, int tareaID, char *descripcion, int duracion)
 {
-    printf("-------- TAREA %d -------- \n", tarea->tareaID);
-    printf("ID: %d \n", tarea->tareaID);
-    printf("Duracion: %d hs\n", tarea->duracion);
-    printf("Descripcion: %s \n", tarea->descripcion);
+    nodo->tarea.tareaID = tareaID;
+    nodo->tarea.descripcion = descripcion;
+    nodo->tarea.duracion = duracion;
 }
 
-void ToDo(tarea **array, tarea **array2, int tamanio)
+void insertarNodoALista(TNodo **lista, TNodo *nodo)
+{
+    TNodo * aux = *lista;
+
+    if(aux != NULL){
+        while(aux->siguiente != NULL){
+            aux = aux->siguiente;
+        }
+        aux->siguiente = nodo;
+    }else{
+        *lista = nodo;
+    }
+}
+
+void mostrarTares(TNodo *lista)
+{
+    printf("-------- TAREA %d -------- \n", lista->tarea.tareaID);
+    printf("ID: %d \n", lista->tarea.tareaID);
+    printf("Duracion: %d hs\n", lista->tarea.duracion);
+    printf("Descripcion: %s \n", lista->tarea.descripcion);
+}
+
+void ToDo(TNodo **lista, TNodo **lista2)
 {
     char respuesta[30]; 
-    for(int i = 0; i < tamanio; i++){
-        mostrarTares(*(array + i));
+    TNodo * indice = *lista;
+    TNodo * indice2 = *lista2;
+    TNodo * anterior = indice;
+    while((indice) != NULL){
+        mostrarTares(indice);
         fflush(stdin);
         printf("La tarea fue realizada? (Responda S/N) ");
         gets(respuesta);
         
-        if(respuesta[0] == 'S' || respuesta[0] == 's'){
-            (*(array2 + i)) = (*(array + i)); 
-            (*(array + i)) = NULL;
+        if(respuesta[0] == 'S' || respuesta[0] == 's'){           
+            indice2 = indice;
+            indice = indice2->siguiente;
+
+            if(anterior->siguiente == indice){
+                *lista = indice;
+                anterior = indice;
+            }else{
+                anterior->siguiente = indice;
+            }
+
+            indice2->siguiente = *lista2;   
+            *lista2 = indice2;    
+          
         }else{
-            (*(array2 + i)) = NULL;
-        }
+            anterior = indice;
+            indice = indice->siguiente;
+        }    
     }
 }
 
-void busquedaPorID(tarea **array, int tamanio)
+void busquedaPorID(TNodo **lista, int tamanio)
 {
+    TNodo *indice;
     int id;
+
+    indice = *lista;
     printf("Ingrese el ID de la tarea que desea buscar (ID > 0): ");
     scanf("%d", &id);
 
     if(id > tamanio){
         printf("El ID ingresado no pertenece a ninguna tarea");
-        busquedaPorID(array, tamanio);
+        busquedaPorID(lista, tamanio);
     } else{
         printf("\n TAREA BUSCADA POR ID \n");
-        mostrarTares(*(array + (id - 1)));
+        while(indice->tarea.tareaID != id){
+            indice = indice->siguiente;
+        }
+        mostrarTares(indice);
     }
 }
 
-void busquedaPorPalabra(tarea **array, int tamanio)
+void busquedaPorPalabra(TNodo **lista)
 {
     char palabraClave[30];
     char *palabraEncont;
     int coincidencia = 0;
+    TNodo *indice;
 
+    indice = *lista;
     printf("Ingrese una palabra clave para buscar una tarea: ");
     gets(palabraClave);
 
     printf("\n TAREA BUSCADA POR PALABRA CLAVE \n");
-    for (int i = 0; i < tamanio; i ++){
+    while(indice != NULL){
        
-        palabraEncont = strstr((*(array + i))->descripcion, palabraClave);
+        palabraEncont = strstr(indice->tarea.descripcion, palabraClave);
 
         if(palabraEncont != NULL){
-            mostrarTares((*(array + i)));
+            mostrarTares(indice);
             coincidencia++;
         }
+        indice = indice->siguiente;
     }
     
     if(coincidencia == 0){
